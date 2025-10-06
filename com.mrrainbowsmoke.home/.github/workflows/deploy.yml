@@ -10,14 +10,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install Wrangler
-        run: |
-          npm ci --no-audit --prefer-offline || true
-          npm install -g wrangler
+      - name: Authenticate Wrangler (Cloudflare action)
+        uses: cloudflare/wrangler-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
 
       - name: Publish to Cloudflare
         env:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: |
-          wrangler deploy --api-token "$CLOUDFLARE_API_TOKEN"
+          wrangler deploy
+
+      - name: Smoke test deployed worker
+        if: ${{ success() }}
+        run: |
+          ./scripts/smoke_test.sh
+        shell: bash
