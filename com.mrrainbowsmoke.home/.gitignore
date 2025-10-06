@@ -1,3 +1,11 @@
+/.wrangler
 .env
+node_modules
+npm-debug.log
+/tmp
+/.vscode
+/.idea
+dist
+build.env
 node_modules/
 /.vscode/

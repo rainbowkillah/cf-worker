@@ -3,9 +3,18 @@
 
 This folder contains a Cloudflare Worker used as the landing page for `home.mrrainbowsmoke.com`.
 
+[![Deploy Worker](https://github.com/rainbowkillah/cf-worker/actions/workflows/deploy.yml/badge.svg)](https://github.com/rainbowkillah/cf-worker/actions/workflows/deploy.yml)
+
 Goals:
 - Serve a small static landing page via Cloudflare Workers.
 - Later integrate Cloudflare D1 (SQL), R2 (object storage), KV, and Durable Objects as needed.
+
+Update (Oct 2025): This worker now serves as a colorful "front door" to the main domains and includes a tiny in-worker virtual chat agent.
+
+Features added
+- Rainbow-themed landing page that links to primary domains.
+- A simple virtual chat API at `/api/chat` that accepts POST requests with a text body and returns a JSON reply. The agent is rule-based and runs entirely inside the Worker (no external AI calls by default).
+- Added verified crendentials json to customIssuanceRequest.json
 
 Quick start
 
@@ -19,6 +28,19 @@ npm run dev
 
 ```bash
 npm run deploy
+```
+
+Quick chat API guide
+
+ - Endpoint: POST /api/chat
+ - Request: raw text in the body (plain text)
+ - Response: JSON { "reply": "..." }
+
+Example (local dev):
+
+```bash
+# Send a question to the virtual agent
+curl -X POST --data "What domains do you have?" http://localhost:8787/api/chat
 ```
 
 Files added
