@@ -1,0 +1,39 @@
+name = "home-mrrainbowsmoke"
+main = "src/index.js"
+type = "javascript"
+compatibility_date = "2025-10-06"
+
+# Set your Cloudflare account ID here when you're ready to publish.
+# account_id = "your-account-id" # or set CF_ACCOUNT_ID in environment (.env)
+
+# Example route (optional):
+# routes = ["home.mrrainbowsmoke.com/*"]
+
+# Bindings scaffolding - replace the placeholder IDs/names with real values from
+# your Cloudflare dashboard when you create the resources.
+
+[durable_objects]
+	# Durable Object classes map a name to a class defined in your worker.
+	# Use array-of-tables for bindings
+	[[durable_objects.bindings]]
+	name = "MY_DO_CLASS"
+	class_name = "MyDurableObject"
+
+[[kv_namespaces]]
+binding = "home_kv"
+id = "a58dff20f26b4f83b4ea3f609d48e17b"
+
+[[d1_databases]]
+binding = "home_db"
+database_name = "home_db"
+database_id = "b8450113-7180-4e93-9965-009b9e011b8a"
+remote = true
+
+[[r2_buckets]]
+binding = "home_r2"
+bucket_name = "home-r2-bucket"
+
+[[migrations]]
+tag = "v1"
+new_classes = ["MyDurableObject"]
+

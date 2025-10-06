@@ -1,0 +1,10 @@
+{
+  "name": "home-mrrainbowsmoke",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler publish"
+  },
+  "devDependencies": {}
+}
