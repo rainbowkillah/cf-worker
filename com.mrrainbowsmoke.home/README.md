@@ -2,7 +2,7 @@
 # home.mrrainbowsmoke.com (Cloudflare Worker)
 
 This folder contains a Cloudflare Worker used as the landing page for `home.mrrainbowsmoke.com`.
-
+[![Deploy Worker](https://github.com/rainbowkillah/cf-worker/actions/workflows/deploy.yml/badge.svg)](https://github.com/rainbowkillah/cf-worker/actions/workflows/deploy.yml)
 Goals:
 - Serve a small static landing page via Cloudflare Workers.
 - Later integrate Cloudflare D1 (SQL), R2 (object storage), KV, and Durable Objects as needed.
