@@ -12,10 +12,31 @@ export default {
     // Forward chat/admin API to Durable Object binding if present
     if (url.pathname.startsWith('/api/')) return forwardToDO(request, env)
     if (url.pathname === '/admin') return adminPage()
+  if (url.pathname === '/sitemap.xml') return sitemapHandler(request, env)
 
     return landingPage()
   }
 }
+
+async function sitemapHandler(request, env){
+  // Try to get links via DO (through forwardToDO) or fallback to local DO call
+  try {
+    // reuse forwarding logic by creating a proxied request to /api/links
+    const url = new URL(request.url)
+    const proxied = new Request(url.origin + '/api/links')
+    const resp = await forwardToDO(proxied, env)
+    if (!resp.ok) return new Response('Error fetching links', { status: 500 })
+    const links = await resp.json()
+    const base = url.origin
+    const urls = links.map(l => `<url><loc>${escapeXml(l.url)}</loc><changefreq>monthly</changefreq></url>`).join('')
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls}</urlset>`
+    return new Response(xml, { headers: { 'content-type': 'application/xml' } })
+  } catch (e) {
+    return new Response('Error generating sitemap: '+String(e), { status: 500 })
+  }
+}
+
+function escapeXml(s){ if (!s) return '' ; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&apos;') }
 
 async function kvExample(env) {
   const kv = env.home_kv || env.MY_KV

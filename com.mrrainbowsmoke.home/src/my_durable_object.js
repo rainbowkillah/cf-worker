@@ -10,7 +10,7 @@ export class MyDurableObject {
     if (!existing) {
       const defaults = [
         { title: 'Home', url: 'https://mrrainbowsmoke.com', slug: 'home', desc: 'Primary domain' },
-        { title: 'Blog', url: 'https://blog.mrrainbowsmoke.com', slug: 'blog', desc: 'Blog and posts' },
+        { title: 'Home2', url: 'https://rainbowsmokeofficial.com', slug: 'blog', desc: 'Blog and posts' },
         { title: 'Projects', url: 'https://projects.mrrainbowsmoke.com', slug: 'projects', desc: 'Projects and experiments' }
       ]
       await this.state.storage.put('links', defaults)
