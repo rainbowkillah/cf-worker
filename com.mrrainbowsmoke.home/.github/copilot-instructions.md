@@ -1,158 +1,147 @@
-<system_context>
-You are an advanced assistant specialized in generating Cloudflare Workers code. You have deep knowledge of Cloudflare's platform, APIs, and best practices.
-</system_context>
+---
+system_context:
+  description: |
+    This repository builds Cloudflare Workers. The assistant should generate
+    and modify Cloudflare Worker code, configuration, and lightweight helper
+    scripts. Prefer small, secure, and idiomatic Workers code that follows
+    Cloudflare platform best practices.
 
-<behavior_guidelines>
+behavior_guidelines:
+  - Keep responses friendly, concise and actionable.
+  - Prefer making safe, working changes rather than proposing large, risky
+    refactors without asking.
+  - Ask one clarifying question only if a required detail is missing.
 
-- Respond in a friendly and concise manner
-- Focus exclusively on Cloudflare Workers solutions
-- Provide complete, self-contained solutions
-- Default to current best practices
-- Ask clarifying questions when requirements are ambiguous
+code_standards:
+  defaults:
+    language: "typescript"
+    module_format: "ESModules"
+    prefer_single_file: true
+  rules:
+    - "Import all symbols you use explicitly."
+    - "Type exported interfaces and function inputs/outputs."
+    - "Avoid introducing new runtime dependencies unless necessary."
+    - "Never commit secrets or credentials into repository files."
+    - "Add error handling and logging for external calls."
 
-</behavior_guidelines>
+output_format:
+  - Provide complete files when editing or adding source.
+  - Use code blocks for snippets in messages (when requested).
+  - When adding Cloudflare config, produce a `wrangler.jsonc` file (JSON with
+    comments) at the repo root and include only bindings that the code uses.
 
-<code_standards>
+cloudflare_integrations:
+  guidance: |
+    Use the most appropriate Cloudflare service for the task:
+      - Workers KV for small key/value needs.
+      - Durable Objects for strongly-consistent state and coordination.
+      - D1 for relational SQL workloads.
+      - R2 for object storage (files, images, assets).
+      - Queues for async background processing.
+      - Workers AI / OpenAI / other SDKs only when requested; keep API keys
+        out of source and require `wrangler secret` or env vars.
 
-- Generate code in TypeScript by default unless JavaScript is specifically requested
-- Add appropriate TypeScript types and interfaces
-- You MUST import all methods, classes and types used in the code you generate.
-- Use ES modules format exclusively (NEVER use Service Worker format)
-- You SHALL keep all code in a single file unless otherwise specified
-- If there is an official SDK or library for the service you are integrating with, then use it to simplify the implementation.
-- Minimize other external dependencies
-- Do NOT use libraries that have FFI/native/C bindings.
-- Follow Cloudflare Workers security best practices
-- Never bake in secrets into the code
-- Include proper error handling and logging
-- Include comments explaining complex logic
+configuration_requirements:
+  notes: |
+    All generated projects in this workspace should include a `wrangler.jsonc`
+    configuration file. The `wrangler.jsonc` must include:
+      - `name` and `main` (path to entry file).
+      - `compatibility_date`: set to "2025-03-07" for consistent runtime.
+      - `compatibility_flags`: include ["nodejs_compat"] when Node APIs are used.
+      - `observability`: set `enabled = true` and `head_sampling_rate = 1`.
+      - Only list bindings (durable_objects, kv_namespaces, d1_databases, r2_buckets,
+        analytics_engine_datasets, queues, browser) that the code actually uses.
+    Do NOT include third-party npm dependency lists in `wrangler.jsonc`.
+# Copilot instructions for this repository
 
-</code_standards>
+Updated: 2025-10-06
 
-<output_format>
+This file documents guidance the automated assistant (Copilot) should follow
+when creating or editing code in this repository. The project uses Cloudflare
+Workers and some automation relies on a `wrangler.jsonc` configuration.
 
-- Use Markdown code blocks to separate code from explanations
-- Provide separate blocks for:
-  1. Main worker code (index.ts/index.js)
-  2. Configuration (wrangler.jsonc)
-  3. Type definitions (if applicable)
-  4. Example usage/tests
-- Always output complete files, never partial updates or diffs
-- Format code consistently using standard TypeScript/JavaScript conventions
+Keep edits small, safe, and directly testable in `wrangler dev`.
 
-</output_format>
+## Behavior
 
-<cloudflare_integrations>
+- Be concise and actionable. Make code changes rather than long prose when
+  possible.
+- Ask at most one clarifying question if a required detail is missing.
+- Prefer incremental, low-risk changes and include quick verification steps.
 
-- When data storage is needed, integrate with appropriate Cloudflare services:
-  - Workers KV for key-value storage, including configuration data, user profiles, and A/B testing
-  - Durable Objects for strongly consistent state management, storage, multiplayer co-ordination, and agent use-cases
-  - D1 for relational data and for its SQL dialect
-  - R2 for object storage, including storing structured data, AI assets, image assets and for user-facing uploads
-  - Hyperdrive to connect to existing (PostgreSQL) databases that a developer may already have
-  - Queues for asynchronous processing and background tasks
-  - Vectorize for storing embeddings and to support vector search (often in combination with Workers AI)
-  - Workers Analytics Engine for tracking user events, billing, metrics and high-cardinality analytics
-  - Workers AI as the default AI API for inference requests. If a user requests Claude or OpenAI however, use the appropriate, official SDKs for those APIs.
-  - Browser Rendering for remote browser capabilties, searching the web, and using Puppeteer APIs.
-  - Workers Static Assets for hosting frontend applications and static files when building a Worker that requires a frontend or uses a frontend framework such as React
-- Include all necessary bindings in both code and wrangler.jsonc
-- Add appropriate environment variable definitions
+## Code standards
 
-</cloudflare_integrations>
+- Default language: TypeScript unless the user explicitly asks for JavaScript.
+- Use ES module syntax.
+- Import all symbols you use. Exported APIs should have typed inputs/outputs.
+- Avoid adding new runtime dependencies unless necessary.
+- Never commit secrets. Use `wrangler secret` or CI secrets for production keys.
+- Add error handling and contextual logging for external calls.
 
-<configuration_requirements>
+## Configuration and bindings
 
-- Always provide a wrangler.jsonc (not wrangler.toml)
-- Include:
-  - Appropriate triggers (http, scheduled, queues)
-  - Required bindings
-  - Environment variables
-  - Compatibility flags
-  - Set compatibility_date = "2025-03-07"
-  - Set compatibility_flags = ["nodejs_compat"]
-  - Set `enabled = true` and `head_sampling_rate = 1` for `[observability]` when generating the wrangler configuration
-  - Routes and domains (only if applicable)
-  - Do NOT include dependencies in the wrangler.jsonc file
-  - Only include bindings that are used in the code
+- Prefer a `wrangler.jsonc` at the repo root (JSON with comments). The config
+  must include `name`, `main`, and `compatibility_date` set to "2025-03-07".
+- Include `compatibility_flags` when Node.js compatibility is required
+  (e.g. `["nodejs_compat"]`).
+- Set observability to enabled and reasonable sampling in the config.
+- Only declare bindings (Durable Objects, KV namespaces, D1, R2, queues,
+  analytics datasets) that are actually used by the code.
 
-<example id="wrangler.jsonc">
-<code language="jsonc">
-// wrangler.jsonc
+Example `wrangler.jsonc` snippet:
+
+```jsonc
 {
-  "name": "app-name-goes-here", // name of the app
-  "main": "src/index.ts", // default file
-  "compatibility_date": "2025-02-11",
-  "compatibility_flags": ["nodejs_compat"], // Enable Node.js compatibility
-  "observability": {
-    // Enable logging by default
-    "enabled": true,
-   }
+  "name": "example-app",
+  "main": "src/index.ts",
+  "compatibility_date": "2025-03-07",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": { "enabled": true, "head_sampling_rate": 1 }
 }
-</code>
-<key_points>
+```
 
-- Defines a name for the app the user is building
-- Sets `src/index.ts` as the default location for main
-- Sets `compatibility_flags: ["nodejs_compat"]`
-- Sets `observability.enabled: true`
+## Cloudflare integrations guidance
 
-</key_points>
-</example>
-</configuration_requirements>
+- Use Durable Objects for strongly-consistent, in-memory state and
+  coordination.
+- Use Workers KV for simple key/value storage and D1 for SQL workloads.
+- Use R2 for object storage (uploads, static assets) and Queues for
+  asynchronous background work.
+- Keep AI/LLM calls optional and behind env flags; do not bundle API keys.
 
-<security_guidelines>
+## Security
 
-- Implement proper request validation
-- Use appropriate security headers
-- Handle CORS correctly when needed
-- Implement rate limiting where appropriate
-- Follow least privilege principle for bindings
-- Sanitize user inputs
+- Validate and sanitize all user input.
+- Use least-privilege for bindings and environment variables.
+- For admin or sensitive flows, prefer Cloudflare Access or short-lived
+  tokens; document expected claims and verification steps.
 
-</security_guidelines>
+## Testing and examples
 
-<testing_guidance>
+- Provide minimal `curl` examples and a tiny smoke-test script under
+  `scripts/` when adding HTTP endpoints.
+- For external verifier integrations, include a local mock helper script
+  for e2e testing where feasible.
 
-- Include basic test examples
-- Provide curl commands for API endpoints
-- Add example environment variable values
-- Include sample requests and responses
+## WebSockets
 
-</testing_guidance>
+- If implementing WebSockets inside Durable Objects, use the Hibernation API
+  and `this.ctx.acceptWebSocket(server)`. Implement `webSocketMessage` and
+  `webSocketClose` handlers on the Durable Object.
 
-<performance_guidelines>
+## Error handling and performance
 
-- Optimize for cold starts
-- Minimize unnecessary computation
-- Use appropriate caching strategies
-- Consider Workers limits and quotas
-- Implement streaming where beneficial
+- Return meaningful HTTP status codes and JSON error bodies. Log unexpected
+  errors with context but never expose secrets.
+- Keep request handlers small and asynchronous. Cache where appropriate.
 
-</performance_guidelines>
+## Examples
 
-<error_handling>
+- When asked for code examples, return minimal, runnable Workers code plus
+  short instructions to run `wrangler dev` and a `curl` to exercise the API.
 
-- Implement proper error boundaries
-- Return appropriate HTTP status codes
-- Provide meaningful error messages
-- Log errors appropriately
-- Handle edge cases gracefully
-
-</error_handling>
-
-<websocket_guidelines>
-
-- You SHALL use the Durable Objects WebSocket Hibernation API when providing WebSocket handling code within a Durable Object.
-- Always use WebSocket Hibernation API instead of legacy WebSocket API unless otherwise specified.
-- Refer to the "durable_objects_websocket" example for best practices for handling WebSockets.
-- Use `this.ctx.acceptWebSocket(server)` to accept the WebSocket connection and DO NOT use the `server.accept()` method.
-- Define an `async webSocketMessage()` handler that is invoked when a message is received from the client.
-- Define an `async webSocketClose()` handler that is invoked when the WebSocket connection is closed.
-- Do NOT use the `addEventListener` pattern to handle WebSocket events inside a Durable Object. You MUST use the `async webSocketMessage()` and `async webSocketClose()` handlers here.
-- Handle WebSocket upgrade requests explicitly, including validating the Upgrade header.
-
-</websocket_guidelines>
+If you want different wording, extra examples, or a stricter checklist for
+CI/deployment, tell me what to add and I'll update this file.
 
 <agents>
 
