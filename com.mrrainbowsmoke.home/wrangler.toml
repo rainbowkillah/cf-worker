@@ -36,7 +36,7 @@ bucket_name = "home-r2-bucket"
 tag = "v1"
 new_sqlite_classes = ["MyDurableObject"]
 
-[[observability.logs]]
+[[observability.logs.enabled]]
 enabled = true
 
 [[analytics_engine_datasets]]
