@@ -36,3 +36,9 @@ bucket_name = "home-r2-bucket"
 tag = "v1"
 new_sqlite_classes = ["MyDurableObject"]
 
+# wrangler.toml (wrangler v3.88.0^)
+[observability.logs]
+enabled = true
+
+
+
