@@ -37,7 +37,7 @@ tag = "v1"
 new_sqlite_classes = ["MyDurableObject"]
 
 [[observability.logs.enabled]]
-enabled = "true"
+"enabled" = "true"
 
 [[analytics_engine_datasets]]
 binding= "home_analytics"
