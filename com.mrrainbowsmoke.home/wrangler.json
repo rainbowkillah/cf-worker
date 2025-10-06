@@ -1,0 +1,52 @@
+{
+  "name": "home-mrrainbowsmoke",
+  "main": "src/index.js",
+  "compatibility_date": "2025-10-06",
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "MY_DO_CLASS",
+        "class_name": "MyDurableObject"
+      }
+    ]
+  },
+  "kv_namespaces": [
+    {
+      "binding": "home_kv",
+      "id": "a58dff20f26b4f83b4ea3f609d48e17b"
+    }
+  ],
+  "d1_databases": [
+    {
+      "binding": "home_db",
+      "database_name": "home_db",
+      "database_id": "b8450113-7180-4e93-9965-009b9e011b8a",
+      "remote": true
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "home_r2",
+      "bucket_name": "home-r2-bucket"
+    }
+  ],
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": [
+        "MyDurableObject"
+      ]
+    }
+  ],
+  "observability": {
+    "logs": {
+      "enabled": true
+    }
+  },
+  "analytics_engine_datasets": [
+    {
+      "binding": "home_analytics",
+      "dataset": "home"
+    }
+  ]
+}
