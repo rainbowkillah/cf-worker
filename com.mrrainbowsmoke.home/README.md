@@ -56,24 +56,5 @@ You can configure GitHub Actions to deploy on push to `main`. The repository mus
 
 The repo includes a sample workflow at `.github/workflows/deploy.yml` that installs Wrangler and runs `wrangler deploy` using those secrets.
 
-Workflow badge
---------------
-
-You can add a badge to show the status of the `Deploy Worker` workflow:
-
-```
-[![Deploy Worker](https://github.com/rainbowkillah/cf-worker/actions/workflows/deploy.yml/badge.svg)](https://github.com/rainbowkillah/cf-worker/actions/workflows/deploy.yml)
-```
-
-Setting up secrets
-------------------
-
-1. Go to your repository Settings → Secrets & variables → Actions.
-2. Add `CLOUDFLARE_API_TOKEN` with a token scoped to:
-	- Account: Read & Write for Workers, KV, D1 and R2 as needed (restrict as appropriate).
-	- Workers Scripts: write
-3. Add `CLOUDFLARE_ACCOUNT_ID` with your account id.
-
-
 
 
