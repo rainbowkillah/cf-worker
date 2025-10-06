@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "wrangler dev",
-    "deploy": "wrangler publish"
+    "deploy": "wrangler publish",
+    "smoke-test": "./scripts/smoke_test.sh"
   },
   "devDependencies": {}
 }

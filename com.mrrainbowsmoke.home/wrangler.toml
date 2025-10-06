@@ -1,10 +1,9 @@
 name = "home-mrrainbowsmoke"
 main = "src/index.js"
-type = "javascript"
 compatibility_date = "2025-10-06"
 
 # Set your Cloudflare account ID here when you're ready to publish.
-# account_id = "your-account-id" # or set CF_ACCOUNT_ID in environment (.env)
+# account_id = "your-account-id" # or set CLOUDFLARE_ACCOUNT_ID in environment (.env)
 
 # Example route (optional):
 # routes = ["home.mrrainbowsmoke.com/*"]
@@ -35,5 +34,5 @@ bucket_name = "home-r2-bucket"
 
 [[migrations]]
 tag = "v1"
-new_classes = ["MyDurableObject"]
+new_sqlite_classes = ["MyDurableObject"]
 

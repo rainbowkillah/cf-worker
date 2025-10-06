@@ -33,11 +33,28 @@ Next steps
 
 Environment / publishing notes
 
-- I added a `.env` file with `CF_ACCOUNT_ID`. This file is in `.gitignore` to avoid committing it.
-- `wrangler publish` will pick up the account id from the environment if you export it first:
 
 ```bash
-export CF_ACCOUNT_ID=$(cat .env | sed -n 's/^CF_ACCOUNT_ID=\(.*\)$/\1/p')
+export CLOUDFLARE_ACCOUNT_ID=$(cat .env | sed -n 's/^CLOUDFLARE_ACCOUNT_ID=\(.*\)$/\1/p')
 wrangler publish
 ```
+ 
+ Deployment
+ ----------
+ 
+ The worker is deployed at:
+ 
+ https://home-mrrainbowsmoke.64zgd764sm.workers.dev
+
+CI / GitHub Actions
+-------------------
+
+You can configure GitHub Actions to deploy on push to `main`. The repository must define the following secrets:
+
+- `CLOUDFLARE_ACCOUNT_ID` — your Cloudflare account ID
+- `CLOUDFLARE_API_TOKEN` — a scoped API token with permissions to manage Workers and related resources
+
+The repo includes a sample workflow at `.github/workflows/deploy.yml` that installs Wrangler and runs `wrangler deploy` using those secrets.
+
+
 
