@@ -1,0 +1,15 @@
+{
+    "callback": {
+        "url": "{REPLACE-WITH-URL}",
+        "state": "{REPLACE-WITH-STATE}",
+        "headers": {
+            "api-key": "{REPLACE-WITH-API-KEY}"
+        }
+    },
+    "authority": "did:web:verifiedid.entra.microsoft.com:d3004885-23ab-4443-9ffd-45e31324a1cf:79a105cf-d4c7-23f8-c15b-4da33d8d0dd9",
+    "registration": {
+        "clientName": "{REPLACE-WITH-CLIENT-NAME}"
+    },
+    "type": "VerifiedEmployee",
+    "manifest": "https://verifiedid.did.msidentity.com/v1.0/tenants/d3004885-23ab-4443-9ffd-45e31324a1cf/verifiableCredentials/contracts/3a52576f-a201-a81e-ff43-374b41fc7751/manifest"
+}

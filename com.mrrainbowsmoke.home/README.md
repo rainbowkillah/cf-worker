@@ -12,6 +12,7 @@ Update (Oct 2025): This worker now serves as a colorful "front door" to the main
 Features added
 - Rainbow-themed landing page that links to primary domains.
 - A simple virtual chat API at `/api/chat` that accepts POST requests with a text body and returns a JSON reply. The agent is rule-based and runs entirely inside the Worker (no external AI calls by default).
+- Added verified crendentials json to customIssuanceRequest.json
 
 Quick start
 
