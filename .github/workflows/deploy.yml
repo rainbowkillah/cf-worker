@@ -1,1 +1,67 @@
-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
+name: Deploy Worker
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Ensure Node.js is available
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Validate required secrets are set
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          missing=()
+          if [ -z "${CLOUDFLARE_API_TOKEN:-}" ]; then missing+=(CLOUDFLARE_API_TOKEN); fi
+          if [ -z "${CLOUDFLARE_ACCOUNT_ID:-}" ]; then missing+=(CLOUDFLARE_ACCOUNT_ID); fi
+          if [ ${#missing[@]} -ne 0 ]; then
+            echo "Missing required secrets: ${missing[*]}"
+            echo "Add the secrets in the repository Settings → Secrets → Actions"
+            exit 1
+          fi
+
+      - name: Check wrangler.jsonc exists
+        run: |
+          if [ ! -f wrangler.jsonc ] && [ ! -f wrangler.json ] && [ ! -f wrangler.toml ]; then
+            echo "No wrangler config found (wrangler.jsonc, wrangler.json or wrangler.toml)."
+            exit 1
+          fi
+
+      - name: Install Wrangler CLI
+        run: |
+          npm ci --silent || npm install -g wrangler
+
+      - name: Authenticate wrangler using API token
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          echo "Authenticating wrangler using CLOUDFLARE_API_TOKEN"
+          # Use the token as an environment variable for non-interactive wrangler commands
+          # Wrangler reads CF_API_TOKEN or CLOUDFLARE_API_TOKEN depending on version
+          export CF_API_TOKEN="${CLOUDFLARE_API_TOKEN}"
+          echo "OK"
+
+      - name: Publish to Cloudflare
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          set -euo pipefail
+          echo "Deploying with wrangler..."
+          wrangler deploy --non-interactive
+
+      - name: Smoke test deployed worker
+        if: ${{ success() }}
+        run: |
+          set -euo pipefail
+          echo "Running smoke tests..."
+          ./scripts/smoke_test.sh
+        shell: bash
